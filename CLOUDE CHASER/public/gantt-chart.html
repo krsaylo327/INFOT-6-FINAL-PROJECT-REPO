@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gantt Chart — UA-TMIP Capstone</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 0.35in;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Calibri", "Segoe UI", Arial, sans-serif;
+            color: #1f2937;
+            background: #e5e7eb;
+            padding: 20px;
+        }
+        .page {
+            max-width: 11.5in;
+            margin: 0 auto;
+            background: white;
+            padding: 30px 40px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 16pt;
+            border-bottom: 3px double #8b0000;
+            padding-bottom: 10pt;
+        }
+        .header .institution {
+            font-size: 9pt;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #555;
+        }
+        .header .title {
+            font-size: 15pt;
+            font-weight: bold;
+            color: #8b0000;
+            margin: 4pt 0 2pt;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .header .subtitle {
+            font-size: 10pt;
+            font-style: italic;
+            color: #555;
+        }
+        .header .methodology {
+            font-size: 9pt;
+            color: #777;
+            margin-top: 2pt;
+        }
+
+        /* Gantt table */
+        table.gantt {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 7.5pt;
+            margin-top: 8pt;
+            table-layout: fixed;
+        }
+        table.gantt th,
+        table.gantt td {
+            border: 1px solid #cbd5e1;
+            padding: 2pt 1pt;
+            text-align: center;
+            height: 14pt;
+        }
+        table.gantt th {
+            background: #8b0000;
+            color: white;
+            font-size: 7pt;
+            font-weight: 600;
+        }
+        table.gantt th.month-th {
+            background: #4b1010;
+            font-size: 7.5pt;
+            letter-spacing: 0.04em;
+        }
+        table.gantt th:first-child,
+        table.gantt td:first-child {
+            text-align: left;
+            padding-left: 5pt;
+            width: 22%;
+        }
+        table.gantt td:first-child {
+            font-size: 8pt;
+        }
+        table.gantt td:not(:first-child) {
+            width: 3.25%;
+        }
+
+        .iteration-header td {
+            background: linear-gradient(90deg, #fef2f2, #fee2e2 60%, #fef2f2);
+            color: #8b0000;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 8.5pt;
+            text-align: left;
+            padding: 4pt 8pt;
+            letter-spacing: 0.06em;
+            border-top: 2px solid #8b0000;
+            border-bottom: 2px solid #8b0000;
+        }
+
+        .bar {
+            background: #8b0000;
+            position: relative;
+        }
+        .bar-light {
+            background: #fca5a5;
+        }
+
+        /* Legend */
+        .legend {
+            margin-top: 14pt;
+            font-size: 8.5pt;
+            display: flex;
+            gap: 20pt;
+            align-items: center;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5pt;
+        }
+        .legend-box {
+            width: 14pt;
+            height: 9pt;
+            border: 1px solid #cbd5e1;
+        }
+        .legend-box.dark { background: #8b0000; }
+        .legend-box.light { background: #fca5a5; }
+        .legend-box.empty { background: white; }
+
+        /* Notes section */
+        .notes {
+            margin-top: 16pt;
+            font-size: 8.5pt;
+            background: #fafafa;
+            border-left: 3px solid #8b0000;
+            padding: 8pt 12pt;
+            line-height: 1.6;
+        }
+        .notes strong { color: #8b0000; }
+
+        /* Footer */
+        .footer {
+            margin-top: 18pt;
+            padding-top: 8pt;
+            border-top: 1px solid #e5e7eb;
+            font-size: 7.5pt;
+            color: #6b7280;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Action bar */
+        .no-print {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
+        .btn {
+            padding: 8px 16px;
+            background: #8b0000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: inherit;
+            box-shadow: 0 2px 8px rgba(139,0,0,0.3);
+        }
+        .btn:hover { background: #6b0000; }
+        .btn-secondary { background: #e5e7eb; color: #374151; box-shadow: none; }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .page { box-shadow: none; padding: 0; max-width: 100%; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <button onclick="window.print()" class="btn">Print / Save as PDF</button>
+    <button onclick="window.close()" class="btn btn-secondary">Close</button>
+</div>
+
+<div class="page">
+
+    <div class="header">
+        <p class="institution">Republic of the Philippines · University of Antique · Sibalom, Antique</p>
+        <p class="title">Gantt Chart — Project Timeline</p>
+        <p class="subtitle">UA-TMIP: Travel Management &amp; Itinerary Platform</p>
+        <p class="methodology">Iterative Agile-Inspired Methodology · 3 Iterations · 24 Weeks (6 Months)</p>
+    </div>
+
+    <table class="gantt">
+        <thead>
+            <tr>
+                <th rowspan="2" style="vertical-align: middle;">Activity / Subphase</th>
+                <th colspan="4" class="month-th">Month 1</th>
+                <th colspan="4" class="month-th">Month 2</th>
+                <th colspan="4" class="month-th">Month 3</th>
+                <th colspan="4" class="month-th">Month 4</th>
+                <th colspan="4" class="month-th">Month 5</th>
+                <th colspan="4" class="month-th">Month 6</th>
+            </tr>
+            <tr>
+                <th>W1</th><th>W2</th><th>W3</th><th>W4</th>
+                <th>W5</th><th>W6</th><th>W7</th><th>W8</th>
+                <th>W9</th><th>W10</th><th>W11</th><th>W12</th>
+                <th>W13</th><th>W14</th><th>W15</th><th>W16</th>
+                <th>W17</th><th>W18</th><th>W19</th><th>W20</th>
+                <th>W21</th><th>W22</th><th>W23</th><th>W24</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <!-- ============ ITERATION 1 ============ -->
+            <tr class="iteration-header">
+                <td colspan="25">▣ Iteration 1 — Core Foundation (Weeks 1–8)</td>
+            </tr>
+
+            <tr>
+                <td>1.1 Planning &amp; Requirements</td>
+                <td class="bar"></td><td class="bar"></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>1.2 System Analysis</td>
+                <td></td><td class="bar"></td><td class="bar"></td>
+                <td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>1.3 Database &amp; UI Design</td>
+                <td></td><td></td><td class="bar"></td><td class="bar"></td>
+                <td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>1.4 Development (Core Modules)</td>
+                <td></td><td></td><td></td><td class="bar"></td>
+                <td class="bar"></td><td class="bar"></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>1.5 Testing &amp; Debugging</td>
+                <td></td><td></td><td></td><td></td><td></td>
+                <td class="bar"></td><td class="bar"></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>1.6 Evaluation &amp; Feedback</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td>
+                <td class="bar"></td><td class="bar"></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+
+            <!-- ============ ITERATION 2 ============ -->
+            <tr class="iteration-header">
+                <td colspan="25">▣ Iteration 2 — Workflow Layer (Weeks 9–16)</td>
+            </tr>
+
+            <tr>
+                <td>2.1 Planning &amp; Requirements</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td class="bar"></td><td class="bar"></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>2.2 System Analysis</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td class="bar"></td><td class="bar"></td>
+                <td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>2.3 Workflow Design</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td class="bar"></td><td class="bar"></td>
+                <td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>2.4 Development (Workflow Modules)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td class="bar"></td>
+                <td class="bar"></td><td class="bar"></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>2.5 Testing &amp; Debugging</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td>
+                <td class="bar"></td><td class="bar"></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>2.6 Evaluation &amp; Feedback</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td>
+                <td class="bar"></td><td class="bar"></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+
+            <!-- ============ ITERATION 3 ============ -->
+            <tr class="iteration-header">
+                <td colspan="25">▣ Iteration 3 — Real-World Features &amp; Polish (Weeks 17–24)</td>
+            </tr>
+
+            <tr>
+                <td>3.1 Planning &amp; Requirements</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td class="bar"></td><td class="bar"></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>3.2 System Analysis</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td class="bar"></td><td class="bar"></td>
+                <td></td><td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>3.3 Design (Signatures, QR, Reports)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td class="bar"></td><td class="bar"></td>
+                <td></td><td></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>3.4 Development (Polish &amp; Real-World)</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td class="bar"></td>
+                <td class="bar"></td><td class="bar"></td><td></td><td></td>
+            </tr>
+            <tr>
+                <td>3.5 Final Testing &amp; UAT</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td>
+                <td class="bar"></td><td class="bar"></td><td></td>
+            </tr>
+            <tr>
+                <td>3.6 Deployment &amp; Documentation</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                <td></td><td></td><td></td><td></td><td></td><td></td>
+                <td class="bar"></td><td class="bar"></td>
+            </tr>
+
+        </tbody>
+    </table>
+
+    <div class="legend">
+        <div class="legend-item"><span class="legend-box dark"></span> Active Work Period</div>
+        <div class="legend-item"><span class="legend-box empty"></span> Not Scheduled</div>
+        <div class="legend-item" style="margin-left: 20pt;">
+            <strong>Note:</strong> &nbsp;Each iteration follows six subphases — Planning, Analysis, Design, Development, Testing, Evaluation.
+        </div>
+    </div>
+
+    <div class="notes">
+        <strong>Methodology:</strong>
+        The study employed an iterative Agile-inspired methodology consisting of three iterations spanning six months.
+        Each iteration followed the same six subphases — <em>Planning, Analysis, Design, Development, Testing, and Evaluation</em> —
+        allowing the developers to incrementally deliver functionality, gather feedback from stakeholders
+        (Records Office, Deans, VPAA, VPREI, and the University President),
+        and refine the system before proceeding to the next iteration.
+        Iteration 1 established the core foundation (authentication, user management, basic travel requests).
+        Iteration 2 implemented the workflow layer (invitations, endorsement letters, multi-level approvals, Travel Orders).
+        Iteration 3 introduced real-world features (digital signatures with QR verification, expense reconciliation,
+        budget code validation, and liability waivers).
+    </div>
+
+    <div class="footer">
+        <div>UA-TMIP · Capstone Project · University of Antique</div>
+        <div>Iterative Methodology Gantt Chart · 24 Weeks</div>
+    </div>
+
+</div>
+
+</body>
+</html>
