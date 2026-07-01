@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Character encoding must be first meta tag -->
+    <meta charset="UTF-8">
+    
+    <!-- Viewport for responsive design on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Page title shown in browser tab -->
+    <title>LibroLog - Manage Your Reading</title>
+    
+    <!-- Description for search engines and social media -->
+    <meta name="description" content="Track your reading progress, rate books, and manage your personal library.">
+    
+    <!-- Prevent theme color shift on mobile -->
+    <meta name="theme-color" content="#2c3e50">
+    
+    <!-- Link to CSS stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Link to Google Fonts for better typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- ===== NAVIGATION HEADER ===== -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <!-- Logo / Brand Name -->
+                <div class="navbar-brand">
+                    <span class="logo-icon">📚</span>
+                    <h1 class="app-title">LibroLog</h1>
+                </div>
+                
+                <!-- Navigation Menu -->
+                <ul class="nav-links">
+                    <li><a href="#" onclick="showSection('home')" class="nav-link active">Home</a></li>
+                    <li><a href="#" onclick="showSection('books')" class="nav-link">My Books</a></li>
+                    <li><a href="#" onclick="showSection('stats')" class="nav-link">Statistics</a></li>
+                    <li><a href="#" class="logout-btn">Logout</a></li>
+                </ul>
+                
+                <!-- Mobile menu toggle (hamburger) -->
+                <button class="menu-toggle" aria-label="Toggle navigation menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+    
+    <!-- ===== MAIN CONTENT ===== -->
+    <main id="main-content" class="main-content">
+        <div class="container">
+            
+            <!-- ===== LOGIN SCREEN ===== -->
+            <section id="login-screen" class="screen active">
+                <div class="auth-container">
+                    <div class="auth-card">
+                        <!-- Login Heading -->
+                        <h2 class="auth-heading">Welcome Back!</h2>
+                        <p class="auth-subtext">Login to your LibroLog account</p>
+                        
+                        <!-- Login Form -->
+                        <form id="login-form" class="form" novalidate>
+                            <!-- Email Input -->
+                            <div class="form-group">
+                                <label for="login-email" class="form-label">Email Address</label>
+                                <input 
+                                    type="email" 
+                                    id="login-email" 
+                                    name="email"
+                                    class="form-input"
+                                    placeholder="you@example.com"
+                                    required
+                                    aria-describedby="email-error">
+                                <span id="email-error" class="error-message"></span>
+                            </div>
+                            
+                            <!-- Password Input -->
+                            <div class="form-group">
+                                <label for="login-password" class="form-label">Password</label>
+                                <input 
+                                    type="password" 
+                                    id="login-password" 
+                                    name="password"
+                                    class="form-input"
+                                    placeholder="••••••••"
+                                    required
+                                    aria-describedby="password-error">
+                                <span id="password-error" class="error-message"></span>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-primary btn-block">
+                                Login
+                            </button>
+                            
+                            <!-- Error Message Container -->
+                            <div id="login-error" class="error-alert" role="alert"></div>
+                            
+                            <!-- Loading State -->
+                            <div id="login-loading" class="loading-indicator hidden">
+                                <div class="spinner"></div>
+                                <p>Logging in...</p>
+                            </div>
+                        </form>
+                        
+                        <!-- Link to Register -->
+                        <p class="auth-footer">
+                            Don't have an account? 
+                            <a href="#" onclick="showSection('register')" class="link-primary">Sign up</a>
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ===== REGISTER SCREEN ===== -->
+            <section id="register-screen" class="screen">
+                <div class="auth-container">
+                    <div class="auth-card">
+                        <!-- Register Heading -->
+                        <h2 class="auth-heading">Create Account</h2>
+                        <p class="auth-subtext">Join LibroLog to start tracking your reading</p>
+                        
+                        <!-- Register Form -->
+                        <form id="register-form" class="form" novalidate>
+                            <!-- Username Input -->
+                            <div class="form-group">
+                                <label for="register-username" class="form-label">Username</label>
+                                <input 
+                                    type="text" 
+                                    id="register-username" 
+                                    name="username"
+                                    class="form-input"
+                                    placeholder="your_username"
+                                    required
+                                    minlength="3"
+                                    maxlength="30"
+                                    aria-describedby="username-error">
+                                <span id="username-error" class="error-message"></span>
+                                <small class="helper-text">3-30 characters</small>
+                            </div>
+                            
+                            <!-- Email Input -->
+                            <div class="form-group">
+                                <label for="register-email" class="form-label">Email Address</label>
+                                <input 
+                                    type="email" 
+                                    id="register-email" 
+                                    name="email"
+                                    class="form-input"
+                                    placeholder="you@example.com"
+                                    required
+                                    aria-describedby="reg-email-error">
+                                <span id="reg-email-error" class="error-message"></span>
+                            </div>
+                            
+                            <!-- Password Input -->
+                            <div class="form-group">
+                                <label for="register-password" class="form-label">Password</label>
+                                <input 
+                                    type="password" 
+                                    id="register-password" 
+                                    name="password"
+                                    class="form-input"
+                                    placeholder="••••••••"
+                                    required
+                                    minlength="6"
+                                    aria-describedby="reg-password-error">
+                                <span id="reg-password-error" class="error-message"></span>
+                                <small class="helper-text">At least 6 characters</small>
+                            </div>
+                            
+                            <!-- Confirm Password Input -->
+                            <div class="form-group">
+                                <label for="register-confirm" class="form-label">Confirm Password</label>
+                                <input 
+                                    type="password" 
+                                    id="register-confirm" 
+                                    name="confirmPassword"
+                                    class="form-input"
+                                    placeholder="••••••••"
+                                    required
+                                    aria-describedby="confirm-error">
+                                <span id="confirm-error" class="error-message"></span>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-primary btn-block">
+                                Create Account
+                            </button>
+                            
+                            <!-- Error Message -->
+                            <div id="register-error" class="error-alert" role="alert"></div>
+                            
+                            <!-- Loading State -->
+                            <div id="register-loading" class="loading-indicator hidden">
+                                <div class="spinner"></div>
+                                <p>Creating account...</p>
+                            </div>
+                        </form>
+                        
+                        <!-- Link to Login -->
+                        <p class="auth-footer">
+                            Already have an account? 
+                            <a href="#" onclick="showSection('login')" class="link-primary">Login</a>
+                        </p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ===== HOME SCREEN ===== -->
+            <section id="home-screen" class="screen">
+                <div class="welcome-section">
+                    <h2>Welcome, <span id="username-display">User</span>! 👋</h2>
+                    <p class="welcome-text">What would you like to do today?</p>
+                    
+                    <div class="quick-actions">
+                        <button class="action-card" onclick="showSection('books')">
+                            <span class="action-icon">📖</span>
+                            <h3>View My Books</h3>
+                            <p>Browse your book collection</p>
+                        </button>
+                        
+                        <button class="action-card" onclick="openAddBookModal()">
+                            <span class="action-icon">➕</span>
+                            <h3>Add New Book</h3>
+                            <p>Track a new book</p>
+                        </button>
+                        
+                        <button class="action-card" onclick="showSection('stats')">
+                            <span class="action-icon">📊</span>
+                            <h3>View Statistics</h3>
+                            <p>See your reading stats</p>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ===== BOOKS SCREEN ===== -->
+            <section id="books-screen" class="screen">
+                <div class="books-header">
+                    <h2>My Books</h2>
+                    <button class="btn btn-primary" onclick="openAddBookModal()">
+                        + Add New Book
+                    </button>
+                </div>
+                
+                <!-- Filter Section -->
+                <div class="filter-section">
+                    <label for="status-filter">Filter by status:</label>
+                    <select id="status-filter" class="filter-select" onchange="filterBooks()">
+                        <option value="all">All Books</option>
+                        <option value="want-to-read">Want to Read</option>
+                        <option value="reading">Currently Reading</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                
+                <!-- Books Grid -->
+                <div id="books-grid" class="books-grid">
+                    <!-- Books will be loaded here via JavaScript -->
+                </div>
+                
+                <!-- Empty State -->
+                <div id="empty-books" class="empty-state hidden">
+                    <p>📚 No books found. <a href="#" onclick="openAddBookModal()" class="link-primary">Add your first book!</a></p>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="books-loading" class="loading-state hidden">
+                    <div class="spinner"></div>
+                    <p>Loading your books...</p>
+                </div>
+            </section>
+            
+            <!-- ===== STATISTICS SCREEN ===== -->
+            <section id="stats-screen" class="screen">
+                <h2>Reading Statistics</h2>
+                
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-icon">📚</span>
+                        <h3>Total Books</h3>
+                        <p class="stat-value" id="total-books">0</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <span class="stat-icon">📖</span>
+                        <h3>Currently Reading</h3>
+                        <p class="stat-value" id="reading-books">0</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <span class="stat-icon">✅</span>
+                        <h3>Completed</h3>
+                        <p class="stat-value" id="completed-books">0</p>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <span class="stat-icon">⭐</span>
+                        <h3>Average Rating</h3>
+                        <p class="stat-value" id="avg-rating">0</p>
+                    </div>
+                </div>
+                
+                <!-- Chart Placeholder -->
+                <div class="chart-container">
+                    <h3>Books by Status</h3>
+                    <div id="status-chart" class="status-chart">
+                        <!-- Chart will be rendered here -->
+                    </div>
+                </div>
+            </section>
+            
+        </div>
+    </main>
+    
+    <!-- ===== MODAL FOR ADD/EDIT BOOK ===== -->
+    <div id="book-modal" class="modal hidden" role="dialog" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <!-- Close Button -->
+            <button class="modal-close" onclick="closeBookModal()" aria-label="Close modal">&times;</button>
+            
+            <h2 id="modal-title" class="modal-heading">Add New Book</h2>
+            
+            <!-- Book Form -->
+            <form id="book-form" class="form" novalidate>
+                <!-- Hidden field for book ID (when editing) -->
+                <input type="hidden" id="book-id" name="bookId">
+                
+                <!-- Title Input -->
+                <div class="form-group">
+    <label for="book-title" class="form-label">Book Title *</label>
+
+    <div style="display:flex; gap:10px;">
+        <input
+            type="text"
+            id="book-title"
+            name="title"
+            class="form-input"
+            placeholder="Enter book title"
+            required
+            maxlength="255"
+            aria-describedby="title-error">
+
+        <button
+            type="button"
+            id="search-book-btn"
+            class="btn btn-secondary">
+            🔍 Search
+        </button>
+    </div>
+
+    <span id="title-error" class="error-message"></span>
+</div>
+                
+                <!-- Author Input -->
+                <div class="form-group">
+                    <label for="book-author" class="form-label">Author *</label>
+                    <input 
+                        type="text" 
+                        id="book-author" 
+                        name="author"
+                        class="form-input"
+                        placeholder="Enter author name"
+                        required
+                        maxlength="255"
+                        aria-describedby="author-error">
+                    <span id="author-error" class="error-message"></span>
+                </div>
+                
+                <!-- ISBN Input -->
+                <div class="form-group">
+                    <label for="book-isbn" class="form-label">ISBN (Optional)</label>
+                    <input 
+                        type="text" 
+                        id="book-isbn" 
+                        name="isbn"
+                        class="form-input"
+                        placeholder="ISBN-13 or ISBN-10"
+                        maxlength="20">
+                </div>
+                
+                <!-- Genre Input -->
+                <div class="form-group">
+                    <label for="book-genre" class="form-label">Genre (Optional)</label>
+                    <input 
+                        type="text" 
+                        id="book-genre" 
+                        name="genre"
+                        class="form-input"
+                        placeholder="e.g., Science Fiction, Mystery"
+                        maxlength="100">
+                </div>
+                
+                <!-- Status Select -->
+                <div class="form-group">
+                    <label for="book-status" class="form-label">Reading Status</label>
+                    <select id="book-status" name="status" class="form-input">
+                        <option value="want-to-read">Want to Read</option>
+                        <option value="reading">Currently Reading</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                
+                <!-- Pages Input -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="book-pages" class="form-label">Total Pages</label>
+                        <input 
+                            type="number" 
+                            id="book-pages" 
+                            name="pages"
+                            class="form-input"
+                            placeholder="300"
+                            min="1">
+                    </div>
+                    
+                    <!-- Current Page Input -->
+                    <div class="form-group">
+                        <label for="book-current-page" class="form-label">Current Page</label>
+                        <input 
+                            type="number" 
+                            id="book-current-page" 
+                            name="currentPage"
+                            class="form-input"
+                            placeholder="150"
+                            min="0">
+                    </div>
+                </div>
+                
+                <!-- Rating Input -->
+                <div class="form-group">
+                    <label for="book-rating" class="form-label">Rating (0-5 stars)</label>
+                    <div class="rating-input">
+                        <input 
+                            type="range" 
+                            id="book-rating" 
+                            name="rating"
+                            class="form-input rating-slider"
+                            min="0" 
+                            max="5" 
+                            step="0.5"
+                            value="0">
+                        <span id="rating-display" class="rating-display">0</span>
+                    </div>
+                </div>
+                
+                <!-- Review Textarea -->
+                <div class="form-group">
+                    <label for="book-review" class="form-label">Review (Optional)</label>
+                    <textarea 
+                        id="book-review" 
+                        name="review"
+                        class="form-textarea"
+                        placeholder="Share your thoughts about this book..."
+                        maxlength="2000"
+                        rows="4"></textarea>
+                    <small class="helper-text"><span id="review-count">0</span>/2000 characters</small>
+                </div>
+                
+                <!-- Form Error -->
+                <div id="book-error" class="error-alert" role="alert"></div>
+                
+                <!-- Loading State -->
+                <div id="book-loading" class="loading-indicator hidden">
+                    <div class="spinner"></div>
+                    <p>Saving book...</p>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        Save Book
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeBookModal()">
+                        Cancel
+                    </button>
+                    <button type="button" id="delete-btn" class="btn btn-danger hidden" onclick="confirmDeleteBook()">
+                        Delete Book
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 LibroLog. Built with secure technology. 
+               <a href="#">Privacy Policy</a> | 
+               <a href="#">Terms of Service</a>
+            </p>
+        </div>
+    </footer>
+    
+    <!-- ===== SCRIPTS ===== -->
+    <!-- Load JavaScript file for functionality -->
+    <script src="script.js"></script>
+    
+</body>
+</html>
