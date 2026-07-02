@@ -1,0 +1,49 @@
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+.fleet/
+.nova/
+.zed/
+
+# Env / secrets (each app has its own .env files)
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+backend_debug_tail.log
+
+# Laravel runtime artifacts
+/vendor
+/.phpunit.cache
+/.phpunit.result.cache
+/.phpactor.json
+/auth.json
+/Homestead.json
+/Homestead.yaml
+
+# Node / build outputs (Laravel Vite + Inertia tooling)
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/public/fonts-manifest.dev.json
+/bootstrap/ssr
+
+# Local data & uploads
+/storage/*.key
+/storage/pail
+/database/database.sqlite
+
+# Vite-generated assets are not committed
+/resources/js/actions
+/resources/js/routes
+/resources/js/wayfinder
+
+# Vite TypeScript build info
+/tsconfig.tsbuildinfo
